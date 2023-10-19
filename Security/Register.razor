@@ -1,0 +1,96 @@
+﻿@page "/register"
+@using Town_of_Fairfax.Data;
+@inject IHttpClientFactory _clientFactory
+@inject NavigationManager _navManager
+@inject IJSRuntime _jsRuntime
+@inject IConfigurationRoot _config
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 min-vh-90 d-flex flex-column justify-content-center">
+                <div class="row">
+                    <div class="col-lg-6 col-md-8 mx-auto">
+
+                        <!-- form card login -->
+                        <div class="card rounded shadow shadow-sm">
+                            <div class="card-header">
+                                <h3 class="mb-0">Login</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="firstname">First Name</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" @bind-value="userModel.FirstName" />
+                                    <div class="invalid-feedback">Oops, you missed this one.</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lastname">Last Name</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" @bind-value="userModel.LastName" />
+                                    <div class="invalid-feedback">Oops, you missed this one.</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="uname1">Username</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" @bind-value="userModel.Username" />
+                                    <div class="invalid-feedback">Oops, you missed this one.</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" class="form-control form-control-lg rounded-0" @bind-value="userModel.Password" />
+                                    <div class="invalid-feedback">Please enter your password!</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Account Number</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" @bind-value="userModel.AccountNumber" />
+                                    <div class="invalid-feedback">Please enter your account number!</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Residential Address</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" @bind-value="userModel.Address"/>
+                                    <div class="invalid-feedback">Please enter your address!</div>
+                                </div>
+
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="text" class="form-control form-control-lg rounded-0" @bind-value="userModel.Email" />
+                                <div class="invalid-feedback">Please enter your address!</div>
+                            </div>
+
+                            <button class="btn btn-success btn-lg float-right" @onclick="()=>CheckCreds()">Register Account</button>
+                            
+                            </div>
+                            <!--/card-block-->
+                        </div>
+                        <!-- /form card login -->
+
+                    </div>
+
+
+                </div>
+                <!--/row-->
+
+            </div>
+            <!--/col-->
+        </div>
+        <!--/row-->
+    </div>
+    <!--/container-->
+
+@code {
+    User userModel = new User();
+
+    protected async Task CheckCreds()
+    {
+        userModel.Role = "User";
+
+        var httpClient = _clientFactory.CreateClient();
+        using var response = await httpClient.PostAsJsonAsync<User>(_config.GetConnectionString("BaseConnectionForApi") + "/api/auth/registeruser", userModel);
+
+        userModel = new User();
+        _navManager.NavigateTo("/login");
+
+    }
+
+}

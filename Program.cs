@@ -11,7 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(AppDomain.CurrentDomain.BaseDirectory).AddJsonFile("appsettings.json").Build();
 
 
-bool prodMode = false;
+bool prodMode = true;
+
+builder.Services.AddSingleton<IConfigurationRoot>(configuration);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
     options.Cookie.Name = "townoffairfax-auth";
@@ -26,8 +28,9 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 if(prodMode is true)
 {
-
-}else
+    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("UsersConnection")));
+}
+else
 {
     builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Town-of-fairfax;MultipleActiveResultSets=true"));
 }

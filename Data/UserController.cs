@@ -28,11 +28,11 @@ namespace Town_of_Fairfax.Data
         [Route("api/auth/getuserbyusername")]
         public async Task<User> GetUser(string username)
         {
-            var user = await _context.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
 
             if(user == null)
             {
-                return null!;
+                return null;
             }else
             {
                 return user;
@@ -56,7 +56,25 @@ namespace Town_of_Fairfax.Data
             }
 
             return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, user);
-        } 
+        }
+
+        [HttpPost]
+        [Route("api/auth/registeruser")]
+        public async Task<HttpResponseMessage> NewPost([FromBody] User user)
+        {
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            var response = new HttpResponseMessage(System.Net.HttpStatusCode.Created)
+            {
+                Content = new StringContent(user.Id + "," + user.Username + ", " + user.Role)
+            };
+
+            return response;
+
+        }
+
 
     }
 }

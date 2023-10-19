@@ -1,7 +1,9 @@
 ﻿@page "/"
 @inject IHttpClientFactory _clientFactory
 @inject IJSRuntime _jsRuntime
+@inject IConfigurationRoot _config
 @using Town_of_Fairfax.Data;
+
 
 <PageTitle>Index</PageTitle>
 
@@ -77,7 +79,7 @@
             <h5 class="card-title">Fairfax Public Library</h5>
             <p class="card-text">Want to catch up on some reading or get some fresh reading material? Visit our public library today!</p>
             <div class="row justify-content-center">
-                <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                <a href="/publiclibrary" class="btn btn-primary" style="max-width: 120px;">More Info</a>
             </div>
         </div>
     </div>
@@ -99,7 +101,7 @@
             <h5 class="card-title">Fairfax City Hall</h5>
             <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
             <div class="row justify-content-center">
-                <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                <a href="/cityhall" class="btn btn-primary" style="max-width: 120px;">More Info</a>
             </div>
         </div>
     </div>
@@ -110,7 +112,7 @@
             <h5 class="card-title">Fairfax City Hall</h5>
             <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
             <div class="row justify-content-center">
-                <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                <a href="/cityhall" class="btn btn-primary" style="max-width: 120px;">More Info</a>
             </div>
         </div>
     </div>
@@ -131,7 +133,7 @@
     {
         var httpClient = _clientFactory.CreateClient();
 
-        var posts = await httpClient.GetFromJsonAsync<List<Post>>("https://localhost:7095/api/posts/getpostsbydepartment?department=Bulletin");
+        var posts = await httpClient.GetFromJsonAsync<List<Post>>(_config.GetConnectionString("BaseConnectionForApi") + "/api/posts/getpostsbydepartment?department=Bulletin");
 
         return posts!;
     }
@@ -142,7 +144,7 @@
         postModel.Date = DateTime.Now;
 
         var httpClient = _clientFactory.CreateClient();
-        using var response = await httpClient.PostAsJsonAsync<Post>("https://localhost:7095/api/posts/createpost", postModel);
+        using var response = await httpClient.PostAsJsonAsync<Post>(_config.GetConnectionString("BaseConnectionForApi") + "/api/posts/createpost", postModel);
         postModel = new Post();
 
         var controlModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/controls.js");
@@ -160,7 +162,7 @@
     protected async Task DeletePost(int id)
     {
         var httpClient = _clientFactory.CreateClient();
-        using var response = await httpClient.DeleteAsync("https://localhost:7095/api/posts/removepost?id=" + id);
+        using var response = await httpClient.DeleteAsync(_config.GetConnectionString("BaseConnectionForApi") + "/api/posts/removepost?id=" + id);
         _posts.Clear();
         _posts = await GetPosts();
         StateHasChanged();
