@@ -1,182 +1,122 @@
 ﻿@page "/"
 @inject IHttpClientFactory _clientFactory
+@inject IJSRuntime _jsRuntime
 @using Town_of_Fairfax.Data;
 
 <PageTitle>Index</PageTitle>
 
-<AuthorizeView>
+<AuthorizeView Roles="Admin,Superadmin,TownClerk">
     <Authorized>
-
         <div class="container">
 
-            <div class="container">
-                <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
-                    <img src=".\Images\library.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax Public Library</h5>
-                        <p class="card-text">Want to catch up on some reading or get some fresh reading material? Visit our public library today!</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
-                        </div>
-                    </div>
-                </div>
+            <div style="width: 100%; float: left; margin-top: 20px; margin-bottom: 20px; display: none;" id="newBulletinContainer">
 
-                <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
-                    <img src=".\Images\lake.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax City Lake</h5>
-                        <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
-                        </div>
-                    </div>
-                </div>
+                <EditForm Model="postModel" Context="NewPostContext">
 
-                <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
-                    <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax City Hall</h5>
-                        <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
-                        </div>
-                    </div>
-                </div>
+                    <div class="text-center">
 
-                <div class="card" style="width: 18rem; float: left;">
-                    <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax City Hall</h5>
-                        <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <InputText @bind-Value="postModel!.Title" class="form-control" placeholder="Post Title" />
                         </div>
+
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Bulletin</button>
+
                     </div>
-                </div>
+
+                </EditForm>
 
             </div>
-
-            <div class="container">
-                @if(context.User.IsInRole("Admin")) {
-                    
-                    <div style="width: 100%; float: left; margin-top: 20px;">
-                        
-                        <EditForm Model="postModel" Context="NewPostContext">
-
-                            <div class="text-center">
-
-                                <div class="form-group">
-                                    <InputText @bind-Value="postModel!.Title" class="form-control-lg" placeholder="Post Title"/>
-                                </div>
-
-                                <div class="form-group">
-                                    <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;"/>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Post</button>
-
-                            </div>
-
-                        </EditForm>
-
-                    </div>
-
-                }
-
-                @if (_posts is not null)
-                {
-
-
-                    foreach (Post p in _posts.OrderByDescending(post => post.Id))
-                    {
-                        <div class="shadow p-3 mb-5 bg-white rounded" style="width: 100%; float: left; margin-top: 20px;">
-                            <h2>@p.Title</h2>
-                            <p>@p.Content</p>
-                        </div>
-                    }
-                }
-            </div>
-
-
         </div>
-
 
     </Authorized>
-
-    <NotAuthorized>
-        
-        <div class="container">
-
-            <div class="container">
-                <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
-                    <img src=".\Images\library.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax Public Library</h5>
-                        <p class="card-text">Want to catch up on some reading or get some fresh reading material? Visit our public library today!</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
-                    <img src=".\Images\lake.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax City Lake</h5>
-                        <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
-                    <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax City Hall</h5>
-                        <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" style="width: 18rem; float: left;">
-                    <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
-                    <div class="card-body">
-                        <h5 class="card-title">Fairfax City Hall</h5>
-                        <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
-                        <div class="row justify-content-center">
-                            <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="container">
-
-
-                @if (_posts is not null)
-                {
-
-
-                    foreach (Post p in _posts.OrderByDescending(post => post.Id))
-                    {
-                        <div class="shadow p-3 mb-5 bg-white rounded" style="width: 100%; float: left; margin-top: 20px;">
-                            <h2>@p.Title</h2>
-                            <p>@p.Content</p>
-                        </div>
-                    }
-                }
-            </div>
-
-
-        </div>
-
-
-    </NotAuthorized>
 </AuthorizeView>
+
+<div class="container">
+    <div style="width: 100%; float: left; overflow: auto; height: 350px; margin-bottom: 45px;" id="bulletinContainer">
+        @if (_posts is not null)
+        {
+
+            if (_posts.Count > 0)
+            {
+                foreach (Post p in _posts!.OrderByDescending(post => post.Date))
+                {
+                    <div class="shadow p-3 mb-5 bg-white rounded" style="width: 90%; float: left; margin-left: 5%; margin-top: 10px;">
+                        <h1 style="padding-bottom: 5px; width: 95%; text-align: left; float: left;">@p.Title</h1>
+                        <h5 style="border-bottom: 1px solid grey; padding-bottom: 5px; width: 15rem; margin: 0 auto; text-align: left; float: left; font-size: 13px;font-style: italic;">@p.Date.ToString()</h5>
+                        <p style="width: 95%; margin: 0 auto; margin-top: 15px; font-size: 16px; float: left;">@p.Content</p>
+                        <AuthorizeView Roles="Admin,Superadmin,TownClerk" Context="DeletePosts">
+                            <button class="btn btn-outline-danger" @onclick='()=>DeletePost(p.Id)' style="margin-top: 20px; float: left;">Delete Bulletin</button>
+                        </AuthorizeView>
+
+                    </div>
+                }
+            }else
+            {
+                <div class="shadow p-3 mb-5 bg-white rounded" style="width: 90%; float: left; margin-left: 5%; margin-top: 10px;">
+                    <h1 style="padding-bottom: 5px; width: 95%; text-align: left; float: left;">No Bulletins To Show! :) </h1>
+                    <h5 style="border-bottom: 1px solid grey; padding-bottom: 5px; width: 15rem; margin: 0 auto; text-align: left; float: left; font-size: 13px;font-style: italic;">~No Data~</h5>
+                    <p style="width: 95%; margin: 0 auto; margin-top: 15px; font-size: 16px; float: left;">No bulletins have been posted for you to see! Check back later for updates from the Town of Fairfax!</p>
+                </div>
+            }
+
+          
+        }
+
+        
+    </div>
+</div>
+
+<div class="container">
+    <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+        <img src=".\Images\library.jpg" class="card-img-top" alt="..." style="max-height: 140px; height: 140px;" />
+        <div class="card-body">
+            <h5 class="card-title">Fairfax Public Library</h5>
+            <p class="card-text">Want to catch up on some reading or get some fresh reading material? Visit our public library today!</p>
+            <div class="row justify-content-center">
+                <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+        <img src=".\Images\lake.jpg" class="card-img-top" alt="..." style="max-height: 140px; height: 140px;" />
+        <div class="card-body">
+            <h5 class="card-title">Fairfax City Lake</h5>
+            <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
+            <div class="row justify-content-center">
+                <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+        <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
+        <div class="card-body">
+            <h5 class="card-title">Fairfax City Hall</h5>
+            <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
+            <div class="row justify-content-center">
+                <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="width: 18rem; float: left;">
+        <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 140px;" />
+        <div class="card-body">
+            <h5 class="card-title">Fairfax City Hall</h5>
+            <p class="card-text">Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.</p>
+            <div class="row justify-content-center">
+                <a href="#" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 
 @code {
     private List<Post> _posts;
@@ -191,17 +131,36 @@
     {
         var httpClient = _clientFactory.CreateClient();
 
-        var posts = await httpClient.GetFromJsonAsync<List<Post>>("https://localhost:7095/api/posts/getposts");
+        var posts = await httpClient.GetFromJsonAsync<List<Post>>("https://localhost:7095/api/posts/getpostsbydepartment?department=Bulletin");
 
         return posts!;
     }
 
     protected async Task CreatePost()
     {
+        postModel.Department = "Bulletin";
+        postModel.Date = DateTime.Now;
+
         var httpClient = _clientFactory.CreateClient();
         using var response = await httpClient.PostAsJsonAsync<Post>("https://localhost:7095/api/posts/createpost", postModel);
         postModel = new Post();
 
+        var controlModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/controls.js");
+
+        await controlModule.InvokeVoidAsync("changeElementText", "bulletinControlBtn", "Create new bulletin");
+        await controlModule.InvokeVoidAsync("hideElement", "newBulletinContainer");
+        await controlModule.InvokeVoidAsync("showElement", "bulletinContainer");
+        Town_of_Fairfax.Components.NewBulletin.showingBulletinContainer = false;
+
+        _posts.Clear();
+        _posts = await GetPosts();
+        StateHasChanged();
+    }
+
+    protected async Task DeletePost(int id)
+    {
+        var httpClient = _clientFactory.CreateClient();
+        using var response = await httpClient.DeleteAsync("https://localhost:7095/api/posts/removepost?id=" + id);
         _posts.Clear();
         _posts = await GetPosts();
         StateHasChanged();

@@ -1,0 +1,98 @@
+﻿@page "/publiclibrary"
+@using Town_of_Fairfax.Data;
+@inject IHttpClientFactory _clientFactory
+@inject IJSRuntime _jsRuntime
+
+
+
+<div class="container">
+
+
+    <div style="width: 100%; float: left; margin-top: 20px;display: none;" id="newBulletinContainer">
+
+        <EditForm Model="postModel" Context="NewPostContext">
+
+            <div class="text-center">
+
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <InputText @bind-Value="postModel!.Title" class="form-control" placeholder="Bulletin Title" />
+                </div>
+
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;" />
+                </div>
+
+                <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Bulletin</button>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+    <div style="width: 100%; float: left;" id="bulletinContainer">
+        @if (_libraryPosts is not null)
+        {
+            foreach (Post post in _libraryPosts)
+            {
+                <div class="shadow p-3 mb-5 bg-white rounded" style="width: 100%; float: left; margin-top: 20px;">
+                    <h3>@post.Title</h3>
+                    <p>@post.Content</p>
+                    <AuthorizeView Roles="LibraryAdmin,TownClerk,Superadmin">
+                        <button class="btn btn-danger" @onclick='()=>DeletePost(post.Id)'>Delete bulletin post</button>
+                    </AuthorizeView>
+                </div>
+            }
+        }
+    </div>
+   
+</div>
+
+
+@code {
+    private Post postModel = new Post();
+    private List<Post> _libraryPosts;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _libraryPosts = await GetPosts();
+    }
+
+    protected async Task<List<Post>> GetPosts()
+    {
+        var httpClient = _clientFactory.CreateClient();
+        var libraryPosts = await httpClient.GetFromJsonAsync<List<Post>>("https://localhost:7095/api/posts/getpostsbydepartment?department=Library");
+
+        return libraryPosts!;
+    }
+
+    protected async Task CreatePost()
+    {
+        postModel.Department = "Library";
+
+        var httpClient = _clientFactory.CreateClient();
+        using var response = await httpClient.PostAsJsonAsync<Post>("https://localhost:7095/api/posts/createpost", postModel);
+        postModel = new Post();
+
+        var controlModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/controls.js");
+
+        await controlModule.InvokeVoidAsync("changeElementText", "bulletinControlBtn", "Create new bulletin");
+        await controlModule.InvokeVoidAsync("hideElement", "newBulletinContainer");
+        await controlModule.InvokeVoidAsync("showElement", "bulletinContainer");
+        Town_of_Fairfax.Components.NewBulletin.showingBulletinContainer = false;
+
+        _libraryPosts.Clear();
+        _libraryPosts = await GetPosts();
+        StateHasChanged();
+    }
+
+    protected async Task DeletePost(int id)
+    {
+        var httpClient = _clientFactory.CreateClient();
+        using var response = await httpClient.DeleteAsync("https://localhost:7095/api/posts/removepost?id=" + id);
+        _libraryPosts.Clear();
+        _libraryPosts = await GetPosts();
+        StateHasChanged();
+    }
+
+}

@@ -1,0 +1,11 @@
+﻿@page "/billpay"
+
+<h3>BillPay - Viewable by all</h3>
+
+<AuthorizeView Roles="TownClerk,CityEmployee,Superadmin">
+    <h5>Viewable by Town Clerk and City Employees</h5>
+</AuthorizeView>
+
+@code {
+
+}

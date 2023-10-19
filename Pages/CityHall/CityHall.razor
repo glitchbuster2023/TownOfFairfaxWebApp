@@ -1,0 +1,14 @@
+﻿@page "/cityhall"
+
+
+<h5>Viewable by all</h5>
+
+<AuthorizeView Roles="Admin, TownClerk, Superadmin">
+
+    <h3>Viewable by Admin & TownClerk</h3>
+
+</AuthorizeView>
+
+@code {
+
+}

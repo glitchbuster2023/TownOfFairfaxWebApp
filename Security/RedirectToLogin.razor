@@ -9,7 +9,7 @@
         var authState = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if(user.Identity.IsAuthenticated is false && !_navManager.Uri.Contains("/login"))
+        if(user.Identity.IsAuthenticated is false && !_navManager.Uri.Contains("/login") || user is null && !_navManager.Uri.Contains("/login"))
         {
             _navManager.NavigateTo("/login");
         }

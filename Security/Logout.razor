@@ -1,0 +1,19 @@
+﻿@page "/logout"
+@inject IJSRuntime _jsRuntime
+@inject NavigationManager _navManager;
+
+@code {
+
+    protected async override void OnAfterRender(bool firstRender)
+    {
+        await Signout();
+    }
+
+    public async Task Signout()
+    {
+        var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+        await authModule.InvokeVoidAsync("Logout", "/login");
+    }
+
+
+}

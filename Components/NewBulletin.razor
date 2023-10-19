@@ -1,0 +1,66 @@
+﻿@inject NavigationManager _navManager
+@inject IJSRuntime _jsRuntime
+
+@if (_navManager.Uri.Equals(_navManager.BaseUri) || _navManager.Uri.Contains("/publiclibrary"))
+{
+    <AuthorizeView Roles="TownClerk, Superadmin">
+        <div class="nav-item px-3" style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
+            <button class="btn btn-primary" @onclick="() => Toggle()" id="bulletinControlBtn">New Bulletin Post</button>
+        </div>
+    </AuthorizeView>
+}else
+{
+   
+}
+
+@implements IDisposable
+
+@code {
+    public static bool showingBulletinContainer = false;
+
+    protected override void OnInitialized()
+    {
+        _navManager.LocationChanged += LocationChanged;
+    }
+
+    async void LocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        Console.WriteLine(_navManager.Uri);
+
+        try
+        {
+            var controlModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/controls.js");
+            await controlModule.InvokeVoidAsync("changeElementText", "bulletinControlBtn", "Create new bulletin");
+        }catch(Exception){}
+
+       Town_of_Fairfax.Components.NewBulletin.showingBulletinContainer = false;
+        
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        _navManager.LocationChanged -= LocationChanged;
+    }
+
+    protected async Task Toggle()
+    {
+        var controlModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/controls.js");
+        if(showingBulletinContainer is false)
+        {
+            await controlModule.InvokeVoidAsync("changeElementText", "bulletinControlBtn", "Cancel new bulletin");
+            await controlModule.InvokeVoidAsync("showElement", "newBulletinContainer");
+            await controlModule.InvokeVoidAsync("hideElement", "bulletinContainer");
+            StateHasChanged();
+        }else
+        {
+            await controlModule.InvokeVoidAsync("changeElementText", "bulletinControlBtn", "Create new bulletin");
+            await controlModule.InvokeVoidAsync("hideElement", "newBulletinContainer");
+            await controlModule.InvokeVoidAsync("showElement", "bulletinContainer");
+            StateHasChanged();
+        }
+
+        showingBulletinContainer = !showingBulletinContainer;
+    }
+
+}
