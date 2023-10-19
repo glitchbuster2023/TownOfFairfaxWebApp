@@ -1,0 +1,18 @@
+﻿@inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject NavigationManager _navManager
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if(user.Identity.IsAuthenticated is false && !_navManager.Uri.Contains("/login"))
+        {
+            _navManager.NavigateTo("/login");
+        }
+    }
+
+}

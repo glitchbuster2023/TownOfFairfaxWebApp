@@ -1,0 +1,37 @@
+﻿@page "/login"
+@inject NavigationManager _navManager
+@inject IHttpClientFactory ClientFactory
+@inject IJSRuntime _jsRuntime
+
+<AuthorizeView>
+    <NotAuthorized>
+        <div>
+            <form>
+                <div class="form-control">
+                    <input type="text" @bind-value="Username" placeholder="Username" />
+                </div>
+                <div class="form-control">
+                    <input type="password" @bind-value="Password" placeholder="Password" />
+                </div>
+                <button type="button" @onclick="() => CheckCreds()">Sign in</button>
+            </form>
+
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    public string Username { get; set; }
+    public string Password { get; set; }
+
+    public async Task CheckCreds()
+    {
+        var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+        await authModule.InvokeVoidAsync("Login", Username, Password, "/");
+
+        StateHasChanged();
+    }
+
+}

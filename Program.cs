@@ -1,13 +1,49 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 using Town_of_Fairfax.Data;
+using Town_of_Fairfax.Data.Context;
+using Town_of_Fairfax.Security;
 
 var builder = WebApplication.CreateBuilder(args);
+
+IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(AppDomain.CurrentDomain.BaseDirectory).AddJsonFile("appsettings.json").Build();
+
+
+bool prodMode = false;
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
+    options.Cookie.Name = "townoffairfax-auth";
+    options.Cookie.SameSite = SameSiteMode.None;
+});
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
+if(prodMode is true)
+{
+
+}else
+{
+    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Town-of-fairfax;MultipleActiveResultSets=true"));
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+
+
+builder.Services.AddSingleton<IConfiguration>(configuration);
+
+builder.Services.AddControllers();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddHttpClient();
+
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
@@ -19,13 +55,19 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 
-app.UseStaticFiles();
 
 app.UseRouting();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseCookiePolicy();
+app.UseAuthentication();
 
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapBlazorHub();
+    endpoints.MapFallbackToPage("/_Host");
+});
 
 app.Run();
