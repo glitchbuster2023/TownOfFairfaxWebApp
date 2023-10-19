@@ -3,6 +3,7 @@
 @inject IHttpClientFactory _clientFactory
 @inject NavigationManager _navManager
 @inject IJSRuntime _jsRuntime
+@inject IConfigurationRoot _config
 
     <div class="container">
         <div class="row">
@@ -85,17 +86,10 @@
         userModel.Role = "User";
 
         var httpClient = _clientFactory.CreateClient();
-        using var response = await httpClient.PostAsJsonAsync<User>("https://localhost:7095/api/auth/registeruser", userModel);
+        using var response = await httpClient.PostAsJsonAsync<User>(_config.GetConnectionString("BaseConnectionForApi") + "/api/auth/registeruser", userModel);
 
-        if(response.IsSuccessStatusCode is true)
-        {
-            userModel = new User();
-            _navManager.NavigateTo("/login");
-        }
-        else if(response.IsSuccessStatusCode is false)
-        {
-            await _jsRuntime.InvokeVoidAsync("alert", "Username is already taken! Try another");
-        }
+        userModel = new User();
+        _navManager.NavigateTo("/login");
 
     }
 
