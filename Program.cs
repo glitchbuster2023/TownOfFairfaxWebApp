@@ -28,7 +28,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 if(prodMode is true)
 {
-    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("UsersConnection")));
+    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 }
 else
 {
