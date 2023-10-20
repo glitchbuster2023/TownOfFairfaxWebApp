@@ -83,6 +83,9 @@
 
     protected async Task CheckCreds()
     {
+        Random r = new Random();
+        userModel.Id = r.Next();
+
         userModel.Role = "User";
 
         var httpClient = _clientFactory.CreateClient();
