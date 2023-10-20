@@ -17,7 +17,8 @@ builder.Services.AddSingleton<IConfigurationRoot>(configuration);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
     options.Cookie.Name = "townoffairfax-auth";
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
