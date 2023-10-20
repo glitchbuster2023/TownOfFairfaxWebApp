@@ -36,7 +36,7 @@ namespace Town_of_Fairfax.Security
         [Route("api/auth/signin")]
         public async Task<bool> SignIn(Credential cred)
         {
-            bool inDev = true;
+            bool inDev = false;
             User userToCheck;
 
             var _httpClient = _clientFactory.CreateClient();
