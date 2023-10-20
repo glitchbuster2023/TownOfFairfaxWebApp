@@ -38,7 +38,7 @@ namespace Town_of_Fairfax.Security
         {
 
             var _httpClient = _clientFactory.CreateClient();
-            User userToCheck = await _httpClient.GetFromJsonAsync<User>("https://localhost:7095/api/auth/getuserbyusername?username=" + cred.Username);
+            User userToCheck = await _httpClient.GetFromJsonAsync<User>("https://townoffairfax.azurewebsites.net/api/auth/getuserbyusername?username=" + cred.Username);
 
             if (userToCheck!.Username.Equals(cred.Username))
             {
