@@ -23,4 +23,7 @@
     <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="Pages\UserView.razor" />
+  </ItemGroup>
 </Project>
