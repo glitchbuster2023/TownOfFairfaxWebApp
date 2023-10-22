@@ -33,7 +33,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 if(prodMode is true)
 {
-    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure());
+    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection")), options => options.EnableRetryOnFailure());
 }
 else
 {
