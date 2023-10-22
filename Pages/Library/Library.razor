@@ -69,6 +69,8 @@
 
     protected async Task CreatePost()
     {
+        Random r = new Random();
+        postModel.Id = r.Next();
         postModel.Department = "Library";
 
         var httpClient = _clientFactory.CreateClient();

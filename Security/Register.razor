@@ -83,9 +83,13 @@
 
     protected async Task CheckCreds()
     {
+        Random r = new Random();
+        userModel.Id = r.Next();
+
         userModel.Role = "User";
 
-        var httpClient = _clientFactory.CreateClient();
+
+        var httpClient = new HttpClient();
         using var response = await httpClient.PostAsJsonAsync<User>(_config.GetConnectionString("BaseConnectionForApi") + "/api/auth/registeruser", userModel);
 
         userModel = new User();

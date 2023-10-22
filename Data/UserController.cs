@@ -32,7 +32,7 @@ namespace Town_of_Fairfax.Data
 
             if(user == null)
             {
-                return null;
+                return null!;
             }else
             {
                 return user;

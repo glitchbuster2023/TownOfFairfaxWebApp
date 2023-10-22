@@ -4,6 +4,9 @@
 @inject IConfigurationRoot _config
 @using Town_of_Fairfax.Data;
 
+@code {
+    public static bool prod = false;
+}
 
 <PageTitle>Index</PageTitle>
 
@@ -140,6 +143,9 @@
 
     protected async Task CreatePost()
     {
+        Random r = new Random();
+        postModel.Id = r.Next();
+
         postModel.Department = "Bulletin";
         postModel.Date = DateTime.Now;
 
