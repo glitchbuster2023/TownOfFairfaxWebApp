@@ -19,8 +19,9 @@ namespace Town_of_Fairfax.Security
 
         private static readonly AuthenticationProperties COOKIE_EXPIRES = new AuthenticationProperties()
         {
+            AllowRefresh = true,
             ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-            IsPersistent = true,
+            IsPersistent = false
         };
 
         [HttpGet]
@@ -37,14 +38,17 @@ namespace Town_of_Fairfax.Security
         public async Task<bool> SignIn(Credential cred)
         {
             bool inDev = false;
-            User userToCheck;
+            User userToCheck = null!;
 
             var _httpClient = _clientFactory.CreateClient();
 
-            if(inDev is false)
+            if (inDev is false) { 
                 userToCheck = await _httpClient.GetFromJsonAsync<User>("https://townoffairfax.azurewebsites.net/api/auth/getuserbyusername?username=" + cred.Username);
-            else
+            }
+            else if(inDev is true)
+            {
                 userToCheck = await _httpClient.GetFromJsonAsync<User>("https://localhost:7095/api/auth/getuserbyusername?username=" + cred.Username);
+            }
 
 
             if (userToCheck!.Username.Equals(cred.Username))
