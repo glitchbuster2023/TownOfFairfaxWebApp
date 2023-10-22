@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(AppDomain.CurrentDomain.BaseDirectory).AddJsonFile("appsettings.json").Build();
 
+builder.Services.AddHttpClient("FairfaxHttpClient").SetHandlerLifetime(TimeSpan.FromHours(12));
 
 bool prodMode = true;
 
@@ -22,6 +23,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
+
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => true;
@@ -31,7 +33,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 if(prodMode is true)
 {
-    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure());
 }
 else
 {
