@@ -63,10 +63,11 @@
     public string Username { get; set; }
     public string Password { get; set; }
 
-    public async Task CheckCreds()
+    public async Task<bool> CheckCreds()
     {
         var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
         await authModule.InvokeVoidAsync("Login", Username, Password, "/");
+        return true;
     }
 
 }
