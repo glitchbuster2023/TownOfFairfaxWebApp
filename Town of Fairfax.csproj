@@ -24,5 +24,6 @@
 
   <ItemGroup>
     <Content Remove="Pages\UserView.razor" />
+    <Content Remove="Pages\Lake\FairfaxCityLake.razor" />
   </ItemGroup>
 </Project>
