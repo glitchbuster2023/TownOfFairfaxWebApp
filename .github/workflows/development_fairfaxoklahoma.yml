@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'fairfaxoklahoma'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_088A2C93FD184C02BB04205FC37D3702 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_59BE0B2A0CFD4F94AD508FDCB28CE852 }}
           package: .
