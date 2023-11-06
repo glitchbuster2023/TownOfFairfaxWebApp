@@ -159,7 +159,7 @@
         postModel.Id = r.Next();
 
         postModel.Department = "Bulletin";
-        postModel.Date = DateTime.Now;
+        postModel.Date = DateTime.UtcNow.AddHours(-6);
 
         var httpClient = _clientFactory.CreateClient();
         using var response = await httpClient.PostAsJsonAsync<Post>(_config.GetConnectionString("BaseConnectionForApi") + "/api/posts/createpost", postModel);
