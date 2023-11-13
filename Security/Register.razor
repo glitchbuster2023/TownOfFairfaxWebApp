@@ -58,7 +58,13 @@
                                 <div class="invalid-feedback">Please enter your address!</div>
                             </div>
 
-                            <button class="btn btn-success btn-lg float-right" @onclick="()=>CheckCreds()">Register Account</button>
+                            <div class="row">
+                                <button style="margin-top: 20px;" class="btn btn-success btn-lg" @onclick="()=>CheckCreds()">Register Account</button>
+                            </div>
+
+                            <div class="row">
+                                <p style="margin-top: 10px; color: red; text-align: center;">@ValidationMessage</p>
+                            </div>
                             
                             </div>
                             <!--/card-block-->
@@ -81,6 +87,8 @@
 @code {
     User userModel = new User();
 
+    string ValidationMessage = "";
+
     protected async Task CheckCreds()
     {
         Random r = new Random();
@@ -100,8 +108,11 @@
             userModel = new User();
             _navManager.NavigateTo("/login");
 
+        }else
+        {
+            ValidationMessage = "All fields are required to register an account! Please verify that you have correctly filled all information out correctly and try again.";
         }
-        
+
     }
 
 }
