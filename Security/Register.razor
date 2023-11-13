@@ -90,11 +90,18 @@
 
 
         var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Accept.Clear();
+        httpClient.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
+        httpClient.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
+
         using var response = await httpClient.PostAsJsonAsync<User>(_config.GetConnectionString("BaseConnectionForApi") + "/api/auth/registeruser", userModel);
 
-        userModel = new User();
-        _navManager.NavigateTo("/login");
+        if(response.IsSuccessStatusCode) {
+            userModel = new User();
+            _navManager.NavigateTo("/login");
 
+        }
+        
     }
 
 }

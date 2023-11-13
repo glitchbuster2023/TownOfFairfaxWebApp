@@ -20,9 +20,14 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="wwwroot\Images\" />
+    <Folder Include="Pages\CityLake\" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Pages\UserView.razor" />
+    <Content Remove="Pages\Lake\FairfaxCityLake.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Pages\CityLake\" />
   </ItemGroup>
 </Project>
