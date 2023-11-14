@@ -1,4 +1,4 @@
-﻿export function Login(username, password, redirect) {
+﻿export async function Login(username, password, redirect) {
     document.getElementById("validationMessage").style.display = "none";
 
     var url = "/api/auth/signin";
@@ -14,12 +14,9 @@
             console.log("Call '" + url + "'. Status " + xhr.status);
             if (redirect)
                 location.replace(redirect);
-        } else if (xhr.readyState == 4 && this.status == 400) {
+        } else if(this.status != 200){
             document.getElementById("validationMessage").style.display = "block";
-            document.getElementById("validationMessage").innerHTML = "Invalid credentials! Please check your username and password and try again.";
-        } else {
-            document.getElementById("validationMessage").style.display = "block";
-            document.getElementById("validationMessage").innerHTML = "An unknown error has occured: { " + this.responseText;
+            document.getElementById("validationMessage").innerHTML = "An unknown error has occured: { " + this.status;
         }
     };
 
