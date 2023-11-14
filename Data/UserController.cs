@@ -26,13 +26,13 @@ namespace Town_of_Fairfax.Data
 
         [HttpGet]
         [Route("api/auth/getuserbyusername")]
-        public async Task<User> GetUser(string username)
+        public async Task<ActionResult<User>> GetUser(string username)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _context.Users.FirstAsync(x => x.Username == username);
 
             if(user == null)
             {
-                return null!;
+                return NotFound();
             }else
             {
                 return user;

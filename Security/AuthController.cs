@@ -35,7 +35,7 @@ namespace Town_of_Fairfax.Security
 
         [HttpPost]
         [Route("api/auth/signin")]
-        public async Task<bool> SignIn(Credential cred)
+        public async Task<ActionResult<bool>> SignIn(Credential cred)
         {
             bool inDev = false;
             User userToCheck = null!;
@@ -54,39 +54,38 @@ namespace Town_of_Fairfax.Security
                 userToCheck = await _httpClient.GetFromJsonAsync<User>("https://localhost:7095/api/auth/getuserbyusername?username=" + cred.Username);
             }
 
+            if(userToCheck is null) {
+                return false;
+            }else {
+                if (userToCheck!.Username.Equals(cred.Username)){
+                    if (userToCheck.Password.Equals(cred.Password)){
+                        var claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, cred.Username),
+                                new Claim(ClaimTypes.Role, userToCheck.Role),
+                                new Claim("userId", userToCheck.Id.ToString())
+                            };
 
-            if (userToCheck!.Username.Equals(cred.Username))
-            {
-                //Valid Login Attempt
-                if (userToCheck.Password.Equals(cred.Password))
-                {
-                    var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, cred.Username),
-                            new Claim(ClaimTypes.Role, userToCheck.Role),
-                            new Claim("userId", userToCheck.Id.ToString())
-                        };
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var authProperties = COOKIE_EXPIRES;
 
-                    var authProperties = COOKIE_EXPIRES;
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-                    return true;
+                        return Ok();
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
                 }
                 else
                 {
-                    return false;
+                    return BadRequest();
                 }
             }
-            else
-            {
-                return false;
-            }
 
-
-
+           
         }
 
         [HttpPost]

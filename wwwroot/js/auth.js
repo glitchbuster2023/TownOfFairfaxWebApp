@@ -15,8 +15,14 @@
             if (redirect)
                 location.replace(redirect);
         } else if(this.status != 200){
-            document.getElementById("validationMessage").style.display = "block";
-            document.getElementById("validationMessage").innerHTML = "An unknown error has occured: { " + this.status;
+            if(this.status == 400) {
+                document.getElementById("validationMessage").style.display = "block";
+                document.getElementById("validationMessage").innerHTML = "Invalid username or password. Please check your credentials and try again.";
+            }else{
+                document.getElementById("validationMessage").style.display = "block";
+                document.getElementById("validationMessage").innerHTML = "An unknown error has occured: { " + this.status;
+            }
+           
         }
     };
 
