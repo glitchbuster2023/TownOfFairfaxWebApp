@@ -1,6 +1,14 @@
 @inject IJSRuntime _jsRuntime
+@inject NavigationManager _navManager
 
 @code {
+    protected override void OnInitialized()
+    {
+        _navManager.LocationChanged += (o, e) =>
+        {
+            UpdateCredentials();
+        };
+    }
 
     protected async override void OnAfterRender(bool firstRender)
     {

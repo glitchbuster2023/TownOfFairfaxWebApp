@@ -5,31 +5,32 @@
 @inject IConfigurationRoot _config
 
 
-
 <div class="container">
+<AuthorizeView Roles="TownClerk,LibraryAdmin,Admin">
+    <Authorized>
+        <div style="width: 100%; float: left; margin-top: 20px;display: none;" id="newBulletinContainer">
 
+            <EditForm Model="postModel" Context="NewPostContext">
 
-    <div style="width: 100%; float: left; margin-top: 20px;display: none;" id="newBulletinContainer">
+                <div class="text-center">
 
-        <EditForm Model="postModel" Context="NewPostContext">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <InputText @bind-Value="postModel!.Title" class="form-control" placeholder="Bulletin Title" />
+                    </div>
 
-            <div class="text-center">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;" />
+                    </div>
 
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <InputText @bind-Value="postModel!.Title" class="form-control" placeholder="Bulletin Title" />
+                    <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Bulletin</button>
+
                 </div>
 
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;" />
-                </div>
+            </EditForm>
 
-                <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Bulletin</button>
-
-            </div>
-
-        </EditForm>
-
-    </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
 
     <div style="width: 100%; float: left;" id="bulletinContainer">
         @if (_libraryPosts is not null)

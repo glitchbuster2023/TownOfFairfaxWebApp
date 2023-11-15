@@ -1,16 +1,21 @@
 ﻿@inject NavigationManager _navManager
 @inject IJSRuntime _jsRuntime
 
-@if (_navManager.Uri.Equals(_navManager.BaseUri) || _navManager.Uri.Contains("/publiclibrary"))
+@if (_navManager.Uri.Equals(_navManager.BaseUri))
 {
     <AuthorizeView Roles="TownClerk, Superadmin">
         <div class="nav-item px-3" style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
             <button class="btn btn-primary" @onclick="() => Toggle()" id="bulletinControlBtn">New Bulletin Post</button>
         </div>
     </AuthorizeView>
-}else
+}
+else if (_navManager.Uri.Contains("/publiclibrary"))
 {
-   
+   <AuthorizeView Roles="TownClerk, Superadmin, LibraryAdmin">
+        <div class="nav-item px-3" style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
+            <button class="btn btn-primary" @onclick="() => Toggle()" id="bulletinControlBtn">New Bulletin Post</button>
+        </div>
+   </AuthorizeView>
 }
 
 @implements IDisposable
