@@ -1,0 +1,15 @@
+@inject IJSRuntime _jsRuntime
+
+@code {
+
+    protected async override void OnAfterRender(bool firstRender)
+    {
+        await UpdateCredentials();
+    }
+
+    protected async Task UpdateCredentials() {
+        var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+        await authModule.InvokeVoidAsync("RefreshAccess");
+    }
+
+}

@@ -35,7 +35,7 @@ namespace Town_of_Fairfax.Security
 
         [HttpPost]
         [Route("api/auth/signin")]
-        public async Task<ActionResult<bool>> SignIn(Credential cred)
+        public async Task<ActionResult> SignIn(Credential cred)
         {
             bool inDev = false;
             User userToCheck = null!;
@@ -55,7 +55,7 @@ namespace Town_of_Fairfax.Security
             }
 
             if(userToCheck is null) {
-                return false;
+                return BadRequest();
             }else {
                 if (userToCheck!.Username.Equals(cred.Username)){
                     if (userToCheck.Password.Equals(cred.Password)){
@@ -72,7 +72,7 @@ namespace Town_of_Fairfax.Security
 
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                        return Ok();
+                        return this.Ok();
                     }
                     else
                     {
@@ -86,6 +86,14 @@ namespace Town_of_Fairfax.Security
             }
 
            
+        }
+
+        [HttpPost]
+        [Route("api/auth/refreshaccess")]
+        public async Task<ActionResult> RefreshAsync() {
+            var cookieAuth = await HttpContext.AuthenticateAsync("Cookies");
+            await HttpContext.SignInAsync("Cookies", cookieAuth.Principal, cookieAuth.Properties);
+            return Ok();
         }
 
         [HttpPost]
