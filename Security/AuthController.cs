@@ -72,15 +72,19 @@ namespace Town_of_Fairfax.Security
 
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
+                        _httpClient.Dispose();
+
                         return this.Ok();
                     }
                     else
                     {
+                        _httpClient.Dispose();
                         return BadRequest();
                     }
                 }
                 else
                 {
+                    _httpClient.Dispose();
                     return BadRequest();
                 }
             }

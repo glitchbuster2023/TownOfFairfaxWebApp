@@ -27,6 +27,16 @@
                         <div class="form-group" style="margin-bottom: 10px;">
                             <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;" />
                         </div>
+                        
+                        <!--
+                        <div class="form-group" style="margin-bottom: 10px;" placeholder="Bulletin type..." value="Info">
+                            <InputSelect @bind-Value="postModel!.PostType" class="form-control">
+                                <option value="Info">Info</option>
+                                <option value="Alert">Alert</option>
+                                <option value="Warning">Warning</option>
+                            </InputSelect>
+                        </div>
+                        -->
 
                         <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Bulletin</button>
 
@@ -120,8 +130,7 @@
         <img src=".\Images\animalcontrol.jpg" class="card-img-top" alt="..." style="max-height: 220px; height: 220px;" />
         <div class="card-body">
             <h5 class="card-title">Fairfax Animal Control</h5>
-            <p class="card-text">~More Info Coming Soon~
-            <br/>
+            <p class="card-text">Fairfax Animal Control services. Click 'More Info' for details.
             <br/>
             <br/>
             <br/>
@@ -149,7 +158,7 @@
         var httpClient = _clientFactory.CreateClient();
 
         var posts = await httpClient.GetFromJsonAsync<List<Post>>(_config.GetConnectionString("BaseConnectionForApi") + "/api/posts/getpostsbydepartment?department=Bulletin");
-
+        httpClient.Dispose();
         return posts!;
     }
 
@@ -172,6 +181,8 @@
         await controlModule.InvokeVoidAsync("showElement", "bulletinContainer");
         Town_of_Fairfax.Components.NewBulletin.showingBulletinContainer = false;
 
+        httpClient.Dispose();
+
         _posts.Clear();
         _posts = await GetPosts();
         StateHasChanged();
@@ -181,6 +192,7 @@
     {
         var httpClient = _clientFactory.CreateClient();
         using var response = await httpClient.DeleteAsync(_config.GetConnectionString("BaseConnectionForApi") + "/api/posts/removepost?id=" + id);
+        httpClient.Dispose();
         _posts.Clear();
         _posts = await GetPosts();
         StateHasChanged();

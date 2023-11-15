@@ -107,7 +107,7 @@
         if(response.IsSuccessStatusCode) {
             userModel = new User();
             _navManager.NavigateTo("/login");
-
+            httpClient.Dispose();
         }else
         {
             ValidationMessage = "All fields are required to register an account! Please verify that you have correctly filled all information out correctly and try again.";
