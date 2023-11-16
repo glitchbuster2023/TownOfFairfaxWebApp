@@ -52,7 +52,11 @@ else
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor().AddHubOptions(hub => hub.MaximumReceiveMessageSize = 100 * 1024 * 1024); // 100 MB
+builder.Services.AddServerSideBlazor().AddHubOptions(hub => hub.MaximumReceiveMessageSize = 100 * 1024 * 1024).AddCircuitOptions(options => {
+    options.DetailedErrors = true;
+    options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(0);
+    options.DisconnectedCircuitMaxRetained = 0;
+}); // 100 MB
 
 
 builder.Services.AddSingleton<IConfiguration>(configuration);
