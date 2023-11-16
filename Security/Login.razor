@@ -1,6 +1,10 @@
 ﻿@page "/login"
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using Town_of_Fairfax.Data;
 @inject NavigationManager _navManager
-@inject IHttpClientFactory ClientFactory
+@inject IHttpClientFactory _clientFactory
+@inject IHttpContextAccessor _httpContextAccessor
 @inject IJSRuntime _jsRuntime
 
 <AuthorizeView>
@@ -68,8 +72,9 @@
     public async Task<bool> CheckCreds()
     {
         var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        await authModule.InvokeVoidAsync("Login", Username, Password, "/");
-        return true;
+        bool result = await authModule.InvokeAsync<bool>("Login", Username, Password, "/");
+
+        return result;
     }
 
 }

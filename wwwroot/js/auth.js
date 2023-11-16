@@ -8,12 +8,23 @@
     xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("Content-Type", "application/json");
 
+
+    var data = {
+        username: username,
+        password: password
+    };
+
+    xhr.send(JSON.stringify(data));
+
+
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && this.status == 200) // 4 = DONE - Good response
         {
             console.log("Call '" + url + "'. Status " + xhr.status);
             if (redirect)
                 location.replace(redirect);
+
+            return true;
         } else if(this.status != 200){
             if(this.status == 400) {
                 document.getElementById("validationMessage").style.display = "block";
@@ -22,16 +33,12 @@
                 document.getElementById("validationMessage").style.display = "block";
                 document.getElementById("validationMessage").innerHTML = "An unknown error has occured: { " + this.status;
             }
-           
+
+            return false;
         }
     };
 
-    var data = {
-        username: username,
-        password: password
-    };
-
-    xhr.send(JSON.stringify(data));
+    return true;
 }
 
 export async function RefreshAccess() {

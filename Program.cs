@@ -16,15 +16,7 @@ bool prodMode = true;
 
 builder.Services.AddSingleton<IConfigurationRoot>(configuration);
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
-    options.Cookie.Name = "fairfaxok.com";
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.LoginPath = "/login";
-    options.LogoutPath = "/logout";
-    options.Cookie.Path = "/";
-    options.Cookie.IsEssential = true;
-});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
 builder.Services.AddSession(options =>
 {
@@ -64,6 +56,7 @@ builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddControllers();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddEndpointsApiExplorer();
 
