@@ -20,9 +20,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.Cookie.Name = "fairfaxok.com";
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.ExpireTimeSpan = TimeSpan.MaxValue;
     options.LoginPath = "/login";
     options.LogoutPath = "/logout";
+    options.Cookie.Path = "/";
+    options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromDays(365);
 });
 
 
@@ -74,6 +81,7 @@ app.UseStaticFiles();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.UseEndpoints(endpoints =>
 {

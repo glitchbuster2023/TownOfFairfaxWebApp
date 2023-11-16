@@ -74,6 +74,8 @@ namespace Town_of_Fairfax.Security
 
                         _httpClient.Dispose();
 
+                        
+
                         return this.Ok();
                     }
                     else
