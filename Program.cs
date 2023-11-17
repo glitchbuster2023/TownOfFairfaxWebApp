@@ -24,6 +24,16 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromDays(365);
 });
 
+builder.Services.AddCors(options =>
+{
+
+    options.AddPolicy("FairfaxPolicy", builder =>
+    {
+        builder.WithOrigins("https://localhost:7095", "https://fairfaxok.com").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+    });
+
+});
+
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
