@@ -3,6 +3,9 @@
 @inject IJSRuntime _jsRuntime
 @inject IConfigurationRoot _config
 @using Town_of_Fairfax.Data;
+@using Microsoft.AspNetCore.Authentication.Cookies
+@attribute [Authorize(Roles = "TownClerk, Superadmin, LibraryAdmin", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+
 
 @code {
     public static bool prod = false;

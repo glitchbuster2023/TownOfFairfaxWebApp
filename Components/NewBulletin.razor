@@ -1,5 +1,7 @@
 ﻿@inject NavigationManager _navManager
 @inject IJSRuntime _jsRuntime
+@using Microsoft.AspNetCore.Authentication.Cookies
+@attribute [Authorize(Roles = "TownClerk, Superadmin, LibraryAdmin", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 
 @if (_navManager.Uri.Equals(_navManager.BaseUri))
 {
