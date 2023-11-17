@@ -1,4 +1,4 @@
-﻿export async function Login(username, password, redirect) {
+﻿export async function Login(username, password, id, role, redirect) {
     document.getElementById("validationMessage").style.display = "none";
 
     var url = "/api/auth/signin";
@@ -11,7 +11,9 @@
 
     var data = {
         username: username,
-        password: password
+        password: password,
+        id: id,
+        role: role
     };
 
     xhr.send(JSON.stringify(data));

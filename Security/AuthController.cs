@@ -37,61 +37,22 @@ namespace Town_of_Fairfax.Security
         [Route("api/auth/signin")]
         public async Task<ActionResult> SignIn(Credential cred)
         {
-            bool inDev = false;
-            User userToCheck = null!;
-
-            var _httpClient = _clientFactory.CreateClient();
-            _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
-            _httpClient.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
-
-
-            if (inDev is false) { 
-                userToCheck = await _httpClient.GetFromJsonAsync<User>("https://fairfaxok.com/api/auth/getuserbyusername?username=" + cred.Username);
-            }
-            else if(inDev is true)
-            {
-                userToCheck = await _httpClient.GetFromJsonAsync<User>("https://localhost:7095/api/auth/getuserbyusername?username=" + cred.Username);
-            }
-
-            if(userToCheck is null) {
-                return BadRequest();
-            }else {
-                if (userToCheck!.Username.Equals(cred.Username)){
-                    if (userToCheck.Password.Equals(cred.Password)){
-                        var claims = new List<Claim>
+            var claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, cred.Username),
-                                new Claim(ClaimTypes.Role, userToCheck.Role),
-                                new Claim("userId", userToCheck.Id.ToString())
+                                new Claim(ClaimTypes.Role, cred.Role),
+                                new Claim("userId", cred.Id)
                             };
 
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                        var authProperties = COOKIE_EXPIRES;
+            var authProperties = COOKIE_EXPIRES;
 
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                        _httpClient.Dispose();
+            return this.Ok();
 
-                        
 
-                        return this.Ok();
-                    }
-                    else
-                    {
-                        _httpClient.Dispose();
-                        return BadRequest();
-                    }
-                }
-                else
-                {
-                    _httpClient.Dispose();
-                    return BadRequest();
-                }
-            }
-
-           
         }
 
         [HttpPost]
@@ -117,6 +78,10 @@ namespace Town_of_Fairfax.Security
     {
         public string Username { get; set; }
         public string Password { get; set; }
+
+        public string Id { get; set; }
+
+        public string Role { get; set; }
     }
 
 

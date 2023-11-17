@@ -47,7 +47,7 @@
                             <!-- /form card login -->
                             </form>
 
-                            <p id="validationMessage" style="color: red;display: none;">Error signing in, please check your username and password and try again!</p>
+                            <p id="validationMessage" style="color: red;" hidden="@(!HideLabel)">Error signing in, please check your username and password and try again!</p>
 
                         </div>
 
@@ -67,16 +67,49 @@
 
 
 @code {
+    private bool HideLabel { get; set; } = false;
 
     public string Username { get; set; }
     public string Password { get; set; }
 
     public async Task<bool> CheckCreds()
     {
-        var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        bool result = await authModule.InvokeAsync<bool>("Login", Username, Password, "/");
+        bool inDev = false;
+        User userToCheck = null!;
 
-        return result;
+        var _httpClient = _clientFactory.CreateClient();
+        _httpClient.DefaultRequestHeaders.Accept.Clear();
+        _httpClient.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
+        _httpClient.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
+
+        userToCheck = await _httpClient.GetFromJsonAsync<User>("https://fairfaxok.com/api/auth/getuserbyusername?username=" + Username);
+
+        if (userToCheck is null)
+        {
+            return false;
+        }
+        else
+        {
+            if (userToCheck!.Username.Equals(Username))
+            {
+                if (userToCheck.Password.Equals(Password))
+                {
+                    var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+                    bool result = await authModule.InvokeAsync<bool>("Login", Username, Password, userToCheck.Id.ToString(), userToCheck.Role, "/");
+                    return result;
+                }
+                else
+                {
+                    HideLabel = true;
+                    return false;
+                }
+            }
+            else
+            {
+                HideLabel = !HideLabel;
+                return false;
+            }
+        }
     }
 
 }

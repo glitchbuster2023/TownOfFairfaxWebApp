@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Town_of_Fairfax.Data;
@@ -15,6 +16,7 @@ builder.Services.AddHttpClient("FairfaxHttpClient").SetHandlerLifetime(Timeout.I
 bool prodMode = true;
 
 builder.Services.AddSingleton<IConfigurationRoot>(configuration);
+
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
