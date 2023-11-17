@@ -16,6 +16,7 @@
                         <div class="col-lg-6 col-md-8 mx-auto">
 
                             <!-- form card login -->
+                            <form @onsubmit="CheckCreds">
                             <div class="card rounded shadow shadow-sm">
                                 <div class="card-header">
                                     <h3 class="mb-0">Login</h3>
@@ -44,6 +45,7 @@
                                 <!--/card-block-->
                             </div>
                             <!-- /form card login -->
+                            </form>
 
                             <p id="validationMessage" style="color: red;display: none;">Error signing in, please check your username and password and try again!</p>
 
