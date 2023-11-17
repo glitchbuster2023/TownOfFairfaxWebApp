@@ -82,7 +82,15 @@
         _httpClient.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
         _httpClient.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
 
-        userToCheck = await _httpClient.GetFromJsonAsync<User>("https://fairfaxok.com/api/auth/getuserbyusername?username=" + Username);
+        try
+        {
+            userToCheck = await _httpClient.GetFromJsonAsync<User>("https://fairfaxok.com/api/auth/getuserbyusername?username=" + Username);
+        }
+        catch (Exception)
+        {
+            userToCheck = null;
+        }
+       
 
         if (userToCheck is null)
         {
