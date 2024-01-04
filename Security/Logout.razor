@@ -1,6 +1,7 @@
 ﻿@page "/logout"
 @inject IJSRuntime _jsRuntime
 @inject NavigationManager _navManager;
+@inject CurrentUser CurrentUser
 
 @code {
 
@@ -11,6 +12,7 @@
 
     public async Task Signout()
     {
+        CurrentUser.user = new Data.User { Username = "Guest", Role = "User"};
         var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
         await authModule.InvokeVoidAsync("Logout", "/login");
     }

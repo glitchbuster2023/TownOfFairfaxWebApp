@@ -1,23 +1,27 @@
 ﻿@inject NavigationManager _navManager
 @inject IJSRuntime _jsRuntime
 @using Microsoft.AspNetCore.Authentication.Cookies
-@attribute [Authorize(Roles = "TownClerk, Superadmin, LibraryAdmin", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+@using Town_of_Fairfax.Security;
+@inject CurrentUser CurrentUser
 
 @if (_navManager.Uri.Equals(_navManager.BaseUri))
 {
-    <AuthorizeView Roles="TownClerk, Superadmin">
+
+    @if(CurrentUser.user != null && CurrentUser.user.Username != "Guest")
+    {
         <div class="nav-item px-3" style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
-            <button class="btn btn-primary" @onclick="() => Toggle()" id="bulletinControlBtn">New Bulletin Post</button>
+            <button class="btn btn-primary" @onclick="() => Toggle()" id="bulletinControlBtn">Create new bulletin</button>
         </div>
-    </AuthorizeView>
+    }
 }
 else if (_navManager.Uri.Contains("/publiclibrary"))
 {
-   <AuthorizeView Roles="TownClerk, Superadmin, LibraryAdmin">
+    @if (CurrentUser.user != null && CurrentUser.user.Username != "Guest")
+    {
         <div class="nav-item px-3" style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
-            <button class="btn btn-primary" @onclick="() => Toggle()" id="bulletinControlBtn">New Bulletin Post</button>
+            <button class="btn btn-primary" @onclick="() => Toggle()" id="bulletinControlBtn">Create new bulletin</button>
         </div>
-   </AuthorizeView>
+    }
 }
 
 @implements IDisposable
@@ -55,7 +59,7 @@ else if (_navManager.Uri.Contains("/publiclibrary"))
         var controlModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/controls.js");
         if(showingBulletinContainer is false)
         {
-            await controlModule.InvokeVoidAsync("changeElementText", "bulletinControlBtn", "Cancel new bulletin");
+            await controlModule.InvokeVoidAsync("changeElementText", "bulletinControlBtn", "Create new bulletin");
             await controlModule.InvokeVoidAsync("showElement", "newBulletinContainer");
             await controlModule.InvokeVoidAsync("hideElement", "bulletinContainer");
             StateHasChanged();
