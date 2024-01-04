@@ -15,46 +15,46 @@
 
 <PageTitle>Index</PageTitle>
 
-<AuthorizeView Roles="Admin,Superadmin,TownClerk">
-    <Authorized>
 
-        <div class="container">
+@if(CurrentUser.user.Username != "Guest")
+{
+    <div class="container">
 
-            <div style="width: 100%; float: left; margin-top: 20px; margin-bottom: 20px; display: none;" id="newBulletinContainer">
+        <div style="width: 100%; float: left; margin-top: 20px; margin-bottom: 20px; display: none;" id="newBulletinContainer">
 
-                <EditForm Model="postModel" Context="NewPostContext">
+            <EditForm Model="postModel" Context="NewPostContext">
 
-                    <div class="text-center">
+                <div class="text-center">
 
-                        <div class="form-group" style="margin-bottom: 10px;">
-                            <InputText @bind-Value="postModel!.Title" class="form-control" placeholder="Post Title" />
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 10px;">
-                            <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;" />
-                        </div>
-                        
-                        <!--
-                        <div class="form-group" style="margin-bottom: 10px;" placeholder="Bulletin type..." value="Info">
-                            <InputSelect @bind-Value="postModel!.PostType" class="form-control">
-                                <option value="Info">Info</option>
-                                <option value="Alert">Alert</option>
-                                <option value="Warning">Warning</option>
-                            </InputSelect>
-                        </div>
-                        -->
-
-                        <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Bulletin</button>
-
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <InputText @bind-Value="postModel!.Title" class="form-control" placeholder="Post Title" />
                     </div>
 
-                </EditForm>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <InputTextArea @bind-Value="postModel!.Content" class="form-control" maxlength="2000" style="width: 100%; height: 200px; resize: none;" />
+                    </div>
 
-            </div>
+                    <!--
+                    <div class="form-group" style="margin-bottom: 10px;" placeholder="Bulletin type..." value="Info">
+                        <InputSelect @bind-Value="postModel!.PostType" class="form-control">
+                            <option value="Info">Info</option>
+                            <option value="Alert">Alert</option>
+                            <option value="Warning">Warning</option>
+                        </InputSelect>
+                    </div>
+                    -->
+
+                    <button type="submit" class="btn btn-primary" @onclick='() => CreatePost()'>Create Bulletin</button>
+
+                </div>
+
+            </EditForm>
+
         </div>
+    </div>
+}
 
-    </Authorized>
-</AuthorizeView>
+
 
 <div class="container">
     <div style="width: 90%; float: left; overflow: auto; height: 350px; margin-bottom: 45px;" id="bulletinContainer">
@@ -69,9 +69,10 @@
                         <h1 style="padding-bottom: 5px; width: 95%; text-align: left; float: left;">@p.Title</h1>
                         <h5 style="border-bottom: 1px solid grey; padding-bottom: 5px; width: 15rem; margin: 0 auto; text-align: left; float: left; font-size: 13px;font-style: italic;">@p.Date.ToString()</h5>
                         <p style="width: 95%; margin: 0 auto; margin-top: 15px; font-size: 16px; float: left;">@p.Content</p>
-                        <AuthorizeView Roles="Admin,Superadmin,TownClerk" Context="DeletePosts">
+                        @if(CurrentUser.user.Username != "Guest")
+                        {
                             <button class="btn btn-outline-danger" @onclick='()=>DeletePost(p.Id)' style="margin-top: 20px; float: left;">Delete Bulletin</button>
-                        </AuthorizeView>
+                        }
 
                     </div>
                 }
