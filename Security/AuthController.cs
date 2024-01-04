@@ -55,7 +55,7 @@ namespace Town_of_Fairfax.Security
 
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("api/auth/refreshaccess")]
         public async Task<ActionResult> RefreshAsync() {
             var cookieAuth = await HttpContext.AuthenticateAsync("Cookies");

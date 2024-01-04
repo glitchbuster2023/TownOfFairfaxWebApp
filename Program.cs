@@ -17,6 +17,8 @@ bool prodMode = true;
 
 builder.Services.AddSingleton<IConfigurationRoot>(configuration);
 
+builder.Services.AddSingleton<CurrentUser>();
+
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 

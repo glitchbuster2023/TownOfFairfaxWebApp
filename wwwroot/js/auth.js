@@ -47,7 +47,7 @@ export async function RefreshAccess() {
     var url = "/api/auth/refreshaccess";
     var xhr = new XMLHttpRequest();
 
-    xhr.open("POST", url);
+    xhr.open("GET", url);
     xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("Content-Type", "application/json");
 

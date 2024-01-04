@@ -6,6 +6,7 @@
 @inject IHttpClientFactory _clientFactory
 @inject IHttpContextAccessor _httpContextAccessor
 @inject IJSRuntime _jsRuntime
+@inject CurrentUser CurrentUser;
 
 <AuthorizeView>
     <NotAuthorized>
@@ -75,48 +76,33 @@
     public async Task<bool> CheckCreds()
     {
         bool inDev = false;
-        User userToCheck = null!;
 
         var _httpClient = _clientFactory.CreateClient();
         _httpClient.DefaultRequestHeaders.Accept.Clear();
         _httpClient.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
-        _httpClient.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
 
-        try
+        var userToCheck = await _httpClient.GetFromJsonAsync<User>("https://fairfaxok.com/api/auth/getuserbyusername?username=" + Username);
+        if (userToCheck!.Username.Equals(Username))
         {
-            userToCheck = await _httpClient.GetFromJsonAsync<User>("https://fairfaxok.com/api/auth/getuserbyusername?username=" + Username);
-        }
-        catch (Exception)
-        {
-            userToCheck = null;
-        }
-       
-
-        if (userToCheck is null)
-        {
-            return false;
-        }
-        else
-        {
-            if (userToCheck!.Username.Equals(Username))
+            if (userToCheck.Password.Equals(Password))
             {
-                if (userToCheck.Password.Equals(Password))
-                {
-                    var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-                    bool result = await authModule.InvokeAsync<bool>("Login", Username, Password, userToCheck.Id.ToString(), userToCheck.Role, "/");
-                    return result;
-                }
-                else
-                {
-                    HideLabel = true;
-                    return false;
-                }
+                var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+                bool result = await authModule.InvokeAsync<bool>("Login", Username, Password, userToCheck.Id.ToString(), userToCheck.Role, "/");
+
+                CurrentUser.user = userToCheck;
+
+                return result;
             }
             else
             {
-                HideLabel = !HideLabel;
+                HideLabel = true;
                 return false;
             }
+        }
+        else
+        {
+            HideLabel = !HideLabel;
+            return false;
         }
     }
 
