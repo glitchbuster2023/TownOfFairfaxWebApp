@@ -75,33 +75,17 @@
 
     public async Task<bool> CheckCreds()
     {
-        bool inDev = false;
 
-        var _httpClient = _clientFactory.CreateClient();
-        _httpClient.DefaultRequestHeaders.Accept.Clear();
-        _httpClient.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
-
-        var userToCheck = await _httpClient.GetFromJsonAsync<User>("https://fairfaxok.com/api/auth/getuserbyusername?username=" + Username);
-        if (userToCheck!.Username.Equals(Username))
+        if(Username == "townclerk" && Password == "Fairfax2023")
         {
-            if (userToCheck.Password.Equals(Password))
-            {
-                var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-                bool result = await authModule.InvokeAsync<bool>("Login", Username, Password, userToCheck.Id.ToString(), userToCheck.Role, "/");
+            CurrentUser.user = new User { Username = "townclerk", Role = "TownClerk", Id = 8, Email = "townoffairfax@windstream.net"};
 
-                CurrentUser.user = userToCheck;
+            var authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+            bool result = await authModule.InvokeAsync<bool>("Login", Username, Password, "1704632625", "TownClerk", "/");
 
-                return result;
-            }
-            else
-            {
-                HideLabel = true;
-                return false;
-            }
-        }
-        else
+            return result;
+        }else
         {
-            HideLabel = !HideLabel;
             return false;
         }
     }
