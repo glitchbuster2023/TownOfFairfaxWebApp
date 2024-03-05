@@ -1,0 +1,25 @@
+﻿@page "/fetchdata"
+@using FairfaxWebApp.Data
+@inject IBulletinService BulletinService
+
+<PageTitle>Weather forecast</PageTitle>
+
+
+<EditForm Model="BulletinModel" OnSubmit="HandleSubmit">
+
+    <button>Test Bulletin</button>
+
+</EditForm>
+
+@code {
+    protected Bulletin BulletinModel = new();
+
+    protected async Task HandleSubmit()
+    {
+        BulletinModel.PostedAt = DateTime.Now;
+        BulletinModel.Content = "Test Bulletin!";
+        BulletinModel.Title = "Job Openings";
+        await BulletinService.CreateBulletin(BulletinModel);
+        BulletinModel = new();
+    }
+}

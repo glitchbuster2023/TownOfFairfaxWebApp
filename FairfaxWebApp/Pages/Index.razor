@@ -1,0 +1,147 @@
+﻿@page "/"
+@using FairfaxWebApp.Data
+@inject IBulletinService BulletinService
+
+<PageTitle>Index</PageTitle>
+
+<div class="container">
+
+    <div id="bulletinPoster" style="width: 100%; display: flex; align-items: center; justify-content: center;">
+        <AuthorizeView>
+
+            <Authorized>
+                
+                <EditForm Model="BulletinModel" OnSubmit="HandlePost" Context="NewBulletin">
+                    <InputText @bind-Value="BulletinModel.Title" style="width: 100%;" placeholder="Title"></InputText>
+                    <InputTextArea @bind-Value="BulletinModel.Content" style="width: 100%; resize: none; min-height: 100px;" placeholder="Bulletin content here."></InputTextArea>
+                    <button style="text-align: center;">Create Bulletin!</button>
+                </EditForm>
+            </Authorized>
+
+        </AuthorizeView>
+    </div>
+
+
+    
+    <div style="width: 100%; max-height: 300px; overflow-y: scroll;">
+        @if (_bulletins != null)
+        {
+            foreach (Bulletin b in _bulletins.OrderByDescending(p => p.PostedAt))
+            {
+
+                <div style="width: 100%; float: left; margin-bottom: 30px; ">
+                    <h2>@b.Title</h2>
+                    <p style="word-break: break-all;">@b.Content</p>
+                    <p>@b.PostedAt</p>
+
+                    <AuthorizeView>
+                        <Authorized>
+                            <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+
+
+
+
+            }
+        }
+    </div>
+
+    <div style="width: 100%; float: left; margin-top: 10px; ">
+        <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+            <img src=".\Images\library.jpg" class="card-img-top" alt="..." style="height: 244px;" />
+            <div class="card-body">
+                <h5 class="card-title">Fairfax Public Library</h5>
+                <p class="card-text">Want to catch up on some reading or get some fresh reading material? Visit our public library today!</p>
+                <div class="row justify-content-center">
+                    <a href="/publiclibrary" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+            <img src=".\Images\lake.jpg" class="card-img-top" alt="..." style="max-height: 240px; height: 220px;" />
+            <div class="card-body">
+                <h5 class="card-title">Fairfax City Lake</h5>
+                <p class="card-text">
+                    Fairfax City Lake is located in Osage County, 4 miles northwest of Fairfax.
+                    <br />
+                    <br />
+                </p>
+                <div class="row justify-content-center">
+                    <a href="/citylake" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+            <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 220px; height: 220px;" />
+            <div class="card-body">
+                <h5 class="card-title">Fairfax City Hall</h5>
+                <p class="card-text">
+                    Fairfax City Hall. Find information about how to contact City Hall!
+                    <br />
+                    <br />
+                    <br />
+                </p>
+                <div class="row justify-content-center">
+                    <a href="/cityhall" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem; float: left;">
+            <img src=".\Images\animalcontrol.jpg" class="card-img-top" alt="..." style="max-height: 220px; height: 220px;" />
+            <div class="card-body">
+                <h5 class="card-title">Fairfax Animal Control</h5>
+                <p class="card-text">
+                    ~More Info Coming Soon~
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </p>
+                <div class="row justify-content-center">
+                    <a href="/animalcontrol" class="btn btn-primary" style="max-width: 120px;">More Info</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+   
+
+</div>
+
+
+@code {
+    private Bulletin BulletinModel = new();
+
+    private List<Bulletin> _bulletins { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bulletins = await BulletinService.GetAllBulletins();
+    }
+
+    protected async Task FetchData()
+    {
+        _bulletins = new();
+        _bulletins = await BulletinService.GetAllBulletins();
+    }
+
+    protected async Task DeleteBulletin(int id)
+    {
+        await BulletinService.RemoveBulletin(id);
+        await FetchData();
+    }
+
+    protected async Task HandlePost()
+    {
+        BulletinModel.PostedAt = DateTime.Now;
+        await BulletinService.CreateBulletin(BulletinModel);
+        BulletinModel = new();
+        await FetchData();
+    }
+
+}
