@@ -18,6 +18,21 @@
                 </EditForm>
             </Authorized>
 
+            <NotAuthorized>
+                <EditForm Model="BulletinModel" OnSubmit="HandlePost" Context="NewBulletin">
+                    <InputSelect @bind-Value="BulletinModel.Department">
+                        <option value="-1" disabled>- Bulletin Type -</option>
+                        <option value="General">General Bulletin</option>
+                        <option value="Warning">Warning</option>
+                        <option value="Water">Water</option>
+                        <option value="Animal Control">Animal Control</option>
+                    </InputSelect>
+                    <InputText @bind-Value="BulletinModel.Title" style="width: 100%;" placeholder="Title"></InputText>
+                    <InputTextArea @bind-Value="BulletinModel.Content" style="width: 100%; resize: none; min-height: 100px;" placeholder="Bulletin content here."></InputTextArea>
+                    <button style="text-align: center;">Create Bulletin!</button>
+                </EditForm>
+            </NotAuthorized>
+
         </AuthorizeView>
     </div>
 
@@ -29,22 +44,57 @@
             foreach (Bulletin b in _bulletins.OrderByDescending(p => p.PostedAt))
             {
 
-                <div style="width: 100%; float: left; margin-bottom: 30px; ">
-                    <h2>@b.Title</h2>
-                    <p style="word-break: break-all;">@b.Content</p>
-                    <p>@b.PostedAt</p>
+                @if(b.Department == "General")
+                {
+                    <div style="width: 100%; float: left; margin-bottom: 30px; background-color: mintcream; padding-left: 10px; padding-right: 10px; border-radius: 15px; padding-top: 5px; padding-bottom: 5px;">
+                        <h2>@b.Title</h2>
+                        <p style="font-style: italic;">@b.PostedAt</p>
+                        <p style="word-break: break-all;">@b.Content</p>
 
-                    <AuthorizeView>
-                        <Authorized>
-                            <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
-                        </Authorized>
-                    </AuthorizeView>
-                </div>
+                        <AuthorizeView>
+                            <Authorized>
+                                <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
+                            </Authorized>
+
+                            <NotAuthorized>
+                                <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    </div>
+
+                }
+                @if(b.Department == "Warning")
+                {
+                    <div style="width: 100%; float: left; margin-bottom: 30px; background-color: indianred; padding-left: 10px; padding-right: 10px; border-radius: 15px; color: white; padding-top: 5px; padding-bottom: 5px;">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" style="max-width: 30px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                            </svg>
+                            @b.Title
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" style="max-width: 30px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                            </svg>
+                        </h3>
+                        <p style="font-style: italic;">@b.PostedAt</p>
+                        <p style="word-break: break-all;">@b.Content</p>
+
+                        <AuthorizeView>
+                            <Authorized>
+                                <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
+                            </Authorized>
+
+                            <NotAuthorized>
+                                <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    </div>
+                }
 
 
 
 
-            }
+
+        }
         }
     </div>
 
