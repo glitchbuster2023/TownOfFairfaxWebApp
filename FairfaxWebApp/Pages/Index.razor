@@ -12,26 +12,16 @@
             <Authorized>
                 
                 <EditForm Model="BulletinModel" OnSubmit="HandlePost" Context="NewBulletin">
-                    <InputText @bind-Value="BulletinModel.Title" style="width: 100%;" placeholder="Title"></InputText>
-                    <InputTextArea @bind-Value="BulletinModel.Content" style="width: 100%; resize: none; min-height: 100px;" placeholder="Bulletin content here."></InputTextArea>
-                    <button style="text-align: center;">Create Bulletin!</button>
-                </EditForm>
-            </Authorized>
-
-            <NotAuthorized>
-                <EditForm Model="BulletinModel" OnSubmit="HandlePost" Context="NewBulletin">
-                    <InputSelect @bind-Value="BulletinModel.Department">
-                        <option value="-1" disabled>- Bulletin Type -</option>
-                        <option value="General">General Bulletin</option>
+                    <InputSelect @bind-Value="BulletinModel.Department" style="width: 100%;">
+                        <option value="General">General Info</option>
                         <option value="Warning">Warning</option>
-                        <option value="Water">Water</option>
-                        <option value="Animal Control">Animal Control</option>
+                        <option value="Water">Water Info</option>
                     </InputSelect>
                     <InputText @bind-Value="BulletinModel.Title" style="width: 100%;" placeholder="Title"></InputText>
                     <InputTextArea @bind-Value="BulletinModel.Content" style="width: 100%; resize: none; min-height: 100px;" placeholder="Bulletin content here."></InputTextArea>
                     <button style="text-align: center;">Create Bulletin!</button>
                 </EditForm>
-            </NotAuthorized>
+            </Authorized>
 
         </AuthorizeView>
     </div>
@@ -46,7 +36,7 @@
 
                 @if(b.Department == "General")
                 {
-                    <div style="width: 100%; float: left; margin-bottom: 30px; background-color: mintcream; padding-left: 10px; padding-right: 10px; border-radius: 15px; padding-top: 5px; padding-bottom: 5px;">
+                    <div style="width: 100%; float: left; margin-bottom: 30px; background-color:floralwhite; padding-left: 10px; padding-right: 10px; border-radius: 15px; padding-top: 5px; padding-bottom: 5px;">
                         <h2>@b.Title</h2>
                         <p style="font-style: italic;">@b.PostedAt</p>
                         <p style="word-break: break-all;">@b.Content</p>
@@ -56,9 +46,6 @@
                                 <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
                             </Authorized>
 
-                            <NotAuthorized>
-                                <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
-                            </NotAuthorized>
                         </AuthorizeView>
                     </div>
 
@@ -67,11 +54,11 @@
                 {
                     <div style="width: 100%; float: left; margin-bottom: 30px; background-color: indianred; padding-left: 10px; padding-right: 10px; border-radius: 15px; color: white; padding-top: 5px; padding-bottom: 5px;">
                         <h3>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" style="max-width: 30px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="yellow" class="w-6 h-6" style="max-width: 30px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                             </svg>
                             @b.Title
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" style="max-width: 30px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="yellow" class="w-6 h-6" style="max-width: 30px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                             </svg>
                         </h3>
@@ -83,9 +70,23 @@
                                 <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
                             </Authorized>
 
-                            <NotAuthorized>
+                        </AuthorizeView>
+                    </div>
+                }
+                @if(b.Department == "Water")
+                {
+                    <div style="width: 100%; float: left; margin-bottom: 30px; background-color: cornflowerblue; padding-left: 10px; padding-right: 10px; border-radius: 15px; color: white; padding-top: 5px; padding-bottom: 5px;">
+                        <h3>
+                            @b.Title
+                        </h3>
+                        <p style="font-style: italic;">@b.PostedAt</p>
+                        <p style="word-break: break-all;">@b.Content</p>
+
+                        <AuthorizeView>
+                            <Authorized>
                                 <button @onclick='()=>DeleteBulletin(b.Id)'>Delete Bulletin</button>
-                            </NotAuthorized>
+                            </Authorized>
+
                         </AuthorizeView>
                     </div>
                 }
@@ -98,9 +99,9 @@
         }
     </div>
 
-    <div style="width: 100%; float: left; margin-top: 10px; ">
-        <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
-            <img src=".\Images\library.jpg" class="card-img-top" alt="..." style="height: 244px;" />
+    <div class="row" style="margin-top: 20px; text-align: center;">
+        <div class="col-sm">
+            <img src=".\Images\library.jpg" class="card-img-top" alt="..." style="max-height: 240px; height: 220px;" />
             <div class="card-body">
                 <h5 class="card-title">Fairfax Public Library</h5>
                 <p class="card-text">Want to catch up on some reading or get some fresh reading material? Visit our public library today!</p>
@@ -110,7 +111,7 @@
             </div>
         </div>
 
-        <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+        <div class="col-sm">
             <img src=".\Images\lake.jpg" class="card-img-top" alt="..." style="max-height: 240px; height: 220px;" />
             <div class="card-body">
                 <h5 class="card-title">Fairfax City Lake</h5>
@@ -125,7 +126,7 @@
             </div>
         </div>
 
-        <div class="card" style="width: 18rem; float: left; margin-right: 20px;">
+        <div class="col-sm">
             <img src=".\Images\city_hall.jpg" class="card-img-top" alt="..." style="max-height: 220px; height: 220px;" />
             <div class="card-body">
                 <h5 class="card-title">Fairfax City Hall</h5>
@@ -141,7 +142,7 @@
             </div>
         </div>
 
-        <div class="card" style="width: 18rem; float: left;">
+        <div class="col-sm">
             <img src=".\Images\animalcontrol.jpg" class="card-img-top" alt="..." style="max-height: 220px; height: 220px;" />
             <div class="card-body">
                 <h5 class="card-title">Fairfax Animal Control</h5>
@@ -159,6 +160,11 @@
         </div>
 
     </div>
+    
+    <div class="row">
+
+       
+    </div>
    
 
 </div>
@@ -172,6 +178,7 @@
     protected override async Task OnInitializedAsync()
     {
         _bulletins = await BulletinService.GetAllBulletins();
+        BulletinModel.Department = "- Select Bulletin Type -";
     }
 
     protected async Task FetchData()
@@ -189,6 +196,12 @@
     protected async Task HandlePost()
     {
         BulletinModel.PostedAt = DateTime.Now;
+
+        if (BulletinModel.Department == "- Select Bulletin Type -")
+        {
+            BulletinModel.Department = "General";
+        }
+
         await BulletinService.CreateBulletin(BulletinModel);
         BulletinModel = new();
         await FetchData();
